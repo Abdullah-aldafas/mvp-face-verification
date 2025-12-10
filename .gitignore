@@ -1,0 +1,70 @@
+# =========================
+# Python / Django
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+# Django migration backups
+*.log
+*.pot
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+env/
+ENV/
+*.env
+*.venv
+
+# Media & static (generated)
+media/
+staticfiles/
+static/
+
+# Local settings
+local_settings.py
+
+# =========================
+# Vite / React Frontend
+# =========================
+node_modules/
+dist/
+build/
+*.local
+
+# Vite config caches
+.vite/
+.vite-cache/
+
+# =========================
+# OS / Editor files
+# =========================
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains
+.idea/
+
+# =========================
+# Environment / Secrets
+# =========================
+*.env
+.env.local
+.env.development
+.env.production
+
+# =========================
+# Git temporary
+# =========================
+*.orig
+*.bak
+*.swp
+*.swo
