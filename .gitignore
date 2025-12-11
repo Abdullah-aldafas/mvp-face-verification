@@ -68,3 +68,4 @@ Thumbs.db
 *.bak
 *.swp
 *.swo
+backend/venv/
