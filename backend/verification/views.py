@@ -5,13 +5,12 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from .models import VerificationRecord
-from .serializers import VerificationRecordSerializer, FaceVerifySerializer
-
-import random
+from .serializers import VerificationRecordSerializer
+from .engine import DummyFaceEngine
 
 
 # ============================================
-# 1) الـ VIEW القديم — نتركه كما هو
+# 1) الـ VIEW القديم — يُستخدم لقائمة السجلات
 # ============================================
 
 class VerificationRecordListCreateView(generics.ListCreateAPIView):
@@ -23,10 +22,14 @@ class VerificationRecordListCreateView(generics.ListCreateAPIView):
     serializer_class = VerificationRecordSerializer
 
 
+# ============================================
+# 2) لوحة المتابعة — Dashboard Summary
+# ============================================
+
 @api_view(["GET"])
 def dashboard_summary(request):
     """
-    GET /api/dashboard/ -> يرجع أرقام بسيطة للوحة المتابعة
+    GET /api/dashboard/ -> يرجع ملخص حالة السجلات
     """
     total = VerificationRecord.objects.count()
     clean = VerificationRecord.objects.filter(status="clean").count()
@@ -49,34 +52,13 @@ def dashboard_summary(request):
             "alert": percent(alert),
         },
     }
+
     return Response(data)
 
 
 # ============================================
-# 2) الـ VIEW الجديد — وجه وهمي Dummy Face Engine
+# 3) الـ VIEW الجديد — التحقق الوهمي من الوجه
 # ============================================
-
-DUMMY_DATA = [
-    {
-        "id_number": "1234567890",
-        "full_name": "Fahad Almutairi",
-        "employer": "Saudi Post",
-        "status": "Verified",
-    },
-    {
-        "id_number": "2233445566",
-        "full_name": "Noura Alqahtani",
-        "employer": "Ministry of Health",
-        "status": "Verified",
-    },
-    {
-        "id_number": "9988776655",
-        "full_name": "Meshari Alosimi",
-        "employer": "Private Sector",
-        "status": "Pending",
-    },
-]
-
 
 class FaceVerificationView(APIView):
     """
@@ -84,18 +66,19 @@ class FaceVerificationView(APIView):
     """
 
     def post(self, request):
-        serializer = FaceVerifySerializer(data=request.data)
+        face_image = request.FILES.get("face_image")
 
-        if serializer.is_valid():
-            # اختيار شخص وهمي من القائمة
-            random_person = random.choice(DUMMY_DATA)
+        # لو ما وصل ملف الصورة
+        if not face_image:
+            return Response({"error": "face_image is required"}, status=400)
 
-            return Response(
-                {
-                    "success": True,
-                    "match": random_person,
-                },
-                status=status.HTTP_200_OK,
-            )
+        # استدعاء المحرك الوهمي من engine.py
+        match = DummyFaceEngine.match_face(face_image)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": True,
+                "match": match,
+            },
+            status=status.HTTP_200_OK,
+        )
