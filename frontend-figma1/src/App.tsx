@@ -1,6 +1,9 @@
 import { Shield, Camera, Image, BarChart3, MapPin, Clock, User, CreditCard, Calendar, Briefcase, AlertTriangle, FileText, ShieldCheck, ShieldAlert, Lightbulb, Menu, X, ArrowUp } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
+const API_URL =
+  import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/verify/';
+
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState<'idle' | 'loading' | 'success' | 'expired' | 'alert'>('idle');
